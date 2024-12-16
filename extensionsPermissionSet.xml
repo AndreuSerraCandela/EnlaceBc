@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PermissionSets>
-  <PermissionSet RoleID="ENLACE BC" RoleName="Enlace BC">
+  <PermissionSet RoleID="REBU BC" RoleName="Rebu BC">
     <Permission>
       <ObjectID>90101</ObjectID>
       <ObjectType>0</ObjectType>
@@ -53,6 +53,16 @@
     </Permission>
     <Permission>
       <ObjectID>90110</ObjectID>
+      <ObjectType>5</ObjectType>
+      <ReadPermission>0</ReadPermission>
+      <InsertPermission>0</InsertPermission>
+      <ModifyPermission>0</ModifyPermission>
+      <DeletePermission>0</DeletePermission>
+      <ExecutePermission>1</ExecutePermission>
+      <SecurityFilter />
+    </Permission>
+    <Permission>
+      <ObjectID>90101</ObjectID>
       <ObjectType>5</ObjectType>
       <ReadPermission>0</ReadPermission>
       <InsertPermission>0</InsertPermission>
