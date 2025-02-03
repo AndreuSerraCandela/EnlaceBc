@@ -875,7 +875,14 @@ codeunit 90100 Importaciones
         JPedidoObj.SelectToken('Sales_Headers', JPedidoToken);
         JFacturas := JPedidoToken.AsArray();
         foreach JToken in JFacturas do begin
-            SalesHeaderT."Document Type" := SalesHeaderT."Document Type"::Invoice;//(JToken, 'Document_Type');
+            Texto := GetValueAsText(JToken, 'Document_Type');
+            Texto := GetValueAsText(JToken, 'Document_Type');
+            case Texto Of
+                'Invoice', 'Factura':
+                    SalesHeaderT."Document Type" := SalesHeaderT."Document Type"::Invoice;
+                'Credit Memo', 'Nota de Crédito', 'Abono', 'Credit Note':
+                    SalesHeaderT."Document Type" := SalesHeaderT."Document Type"::"Credit Memo";
+            end;
             SalesHeaderT."Sell-to Customer No." := GetValueAsText(JToken, 'Sell_to_Customer_No_');
             SalesHeaderT."No." := GetValueAsText(JToken, 'No_');
             SalesHeaderT."Bill-to Customer No." := GetValueAsText(JToken, 'Bill_to_Customer_No_');
@@ -885,6 +892,13 @@ codeunit 90100 Importaciones
             SalesHeaderT."Bill-to Address 2" := GetValueAsText(JToken, 'Bill_to_Address_2');
             SalesHeaderT."Bill-to City" := GetValueAsText(JToken, 'Bill_to_City');
             SalesHeaderT."Bill-to Contact" := GetValueAsText(JToken, 'Bill_to_Contact');
+            SalesHeaderT."Sell-to Customer No." := GetValueAsText(JToken, 'Sell_to_Customer_No_');
+            SalesHeaderT."Sell-to Customer Name" := GetValueAsText(JToken, 'Sell_to_Customer_Name');
+            SalesHeaderT."Sell-to Customer Name 2" := GetValueAsText(JToken, 'Sell_to_Customer_Name_2');
+            SalesHeaderT."Sell-to Address" := GetValueAsText(JToken, 'Sell_to_Address');
+            SalesHeaderT."Sell-to Address 2" := GetValueAsText(JToken, 'Sell_to_Address_2');
+            SalesHeaderT."Sell-to City" := GetValueAsText(JToken, 'Sell_to_City');
+            SalesHeaderT."Sell-to Contact" := GetValueAsText(JToken, 'Sell_to_Contact');
             SalesHeaderT."Your Reference" := GetValueAsText(JToken, 'Your_Reference');
             SalesHeaderT."Ship-to Code" := GetValueAsText(JToken, 'Ship_to_Code');
             SalesHeaderT."Ship-to Name" := GetValueAsText(JToken, 'Ship_to_Name');
@@ -1050,7 +1064,7 @@ codeunit 90100 Importaciones
             // SalesHeaderT."SII Last Summary Doc. No.":=GetValueAsText(JToken, 'SII_Last_Summary_Doc__No_');
             SalesHeaderT."Applies-to Bill No." := GetValueAsText(JToken, 'Applies_to_Bill_No_');
             SalesHeaderT."Cust. Bank Acc. Code" := GetValueAsText(JToken, 'Cust__Bank_Acc__Code');
-
+            SalesHeaderT."VAT Registration No." := GetValueAsText(JToken, 'VAT_Registration_No_');
 
 
             If SalesHeaderT."No." <> '' Then Error('Falta implementar la mod. de un pedido');
@@ -1058,6 +1072,26 @@ codeunit 90100 Importaciones
             Pedido."No." := '';
             Pedido.Insert(true);
             Pedido.Validate("Sell-to Customer No.");
+            if SalesHeaderT."Bill-to Customer No." <> '' then
+                Pedido."Bill-to Customer No." := SalesHeaderT."Bill-to Customer No.";
+            if SalesHeaderT."Bill-to Name" <> '' then
+                Pedido."Bill-to Name" := SalesHeaderT."Bill-to Name";
+            if SalesHeaderT."Bill-to Name 2" <> '' then
+                Pedido."Bill-to Name 2" := SalesHeaderT."Bill-to Name 2";
+            if SalesHeaderT."Bill-to Address" <> '' then
+                Pedido."Bill-to Address" := SalesHeaderT."Bill-to Address";
+            if SalesHeaderT."Bill-to Address 2" <> '' then
+                Pedido."Bill-to Address 2" := SalesHeaderT."Bill-to Address 2";
+            if SalesHeaderT."Bill-to City" <> '' then
+                Pedido."Bill-to City" := SalesHeaderT."Bill-to City";
+            if SalesHeaderT."Bill-to Contact" <> '' then
+                Pedido."Bill-to Contact" := SalesHeaderT."Bill-to Contact";
+            if SalesHeaderT."Bill-to Post Code" <> '' then
+                Pedido."Bill-to Post Code" := SalesHeaderT."Bill-to Post Code";
+            if SalesHeaderT."Bill-to County" <> '' then
+                Pedido."Bill-to County" := SalesHeaderT."Bill-to County";
+            if SalesHeaderT."Bill-to Country/Region Code" <> '' then
+                Pedido."Bill-to Country/Region Code" := SalesHeaderT."Bill-to Country/Region Code";
             If SalesHeaderT."Payment Method Code" <> '' then
                 Pedido.Validate("Payment Method Code", SalesHeaderT."Payment Method Code");
             if SalesHeaderT."Posting Date" <> 0D Then
@@ -1070,6 +1104,34 @@ codeunit 90100 Importaciones
                 Pedido."Shipment Date" := SalesHeaderT."Shipment Date";
             If SalesHeaderT."Requested Delivery Date" <> 0D Then
                 Pedido."Requested Delivery Date" := SalesHeaderT."Requested Delivery Date";
+            if SalesHeaderT."Sell-to Customer Name" <> '' then
+                Pedido."Sell-to Customer Name" := SalesHeaderT."Sell-to Customer Name";
+            if SalesHeaderT."Sell-to Customer Name 2" <> '' then
+                Pedido."Sell-to Customer Name 2" := SalesHeaderT."Sell-to Customer Name 2";
+            if SalesHeaderT."Sell-to Address" <> '' then
+                Pedido.Validate("Sell-to Address", SalesHeaderT."Sell-to Address");
+            if SalesHeaderT."Sell-to Address 2" <> '' then
+                Pedido.Validate("Sell-to Address 2", SalesHeaderT."Sell-to Address 2");
+            if SalesHeaderT."Sell-to City" <> '' then
+                Pedido.Validate("Sell-to City", SalesHeaderT."Sell-to City");
+            if SalesHeaderT."Sell-to Contact" <> '' then
+                Pedido.Validate("Sell-to Contact", SalesHeaderT."Sell-to Contact");
+            if SalesHeaderT."Sell-to Phone No." <> '' then
+                Pedido.Validate("Sell-to Phone No.", SalesHeaderT."Sell-to Phone No.");
+            if SalesHeaderT."Sell-to E-Mail" <> '' then
+                Pedido.Validate("Sell-to E-Mail", SalesHeaderT."Sell-to E-Mail");
+            if SalesHeaderT."Sell-to Post Code" <> '' then
+                Pedido.Validate("Sell-to Post Code", SalesHeaderT."Sell-to Post Code");
+            if SalesHeaderT."Sell-to County" <> '' then
+                Pedido.Validate("Sell-to County", SalesHeaderT."Sell-to County");
+            if SalesHeaderT."Sell-to Country/Region Code" <> '' then
+                Pedido.Validate("Sell-to Country/Region Code", SalesHeaderT."Sell-to Country/Region Code");
+            if SalesHeaderT."Bill-to County" <> '' then
+                Pedido.Validate("Bill-to County", SalesHeaderT."Bill-to County");
+            if SalesHeaderT."Bill-to Country/Region Code" <> '' then
+                Pedido.Validate("Bill-to Country/Region Code", SalesHeaderT."Bill-to Country/Region Code");
+            if SalesHeaderT."VAT Registration No." <> '' then
+                Pedido."VAT Registration No." := SalesHeaderT."VAT Registration No.";
             Pedido.Modify();
             SalesHeaderT."No." := Pedido."No.";
 
@@ -1116,7 +1178,14 @@ codeunit 90100 Importaciones
         JLPedidoObj.SelectToken('Sales_Lines', JLPedidoToken);
         JLFacturas := JLPedidoToken.AsArray();
         foreach JToken in JLFacturas do begin
-            SalesLineT."Document Type" := SalesLineT."Document Type"::Invoice;// GetValueAsText(JToken, 'Document_Type');
+            Texto := GetValueAsText(JToken, 'Document_Type');
+            case Texto Of
+                'Invoice', 'Factura':
+                    SalesLineT."Document Type" := SalesLineT."Document Type"::Invoice;
+                'Credit Memo', 'Nota de Crédito', 'Abono', 'Credit Note':
+                    SalesLineT."Document Type" := SalesLineT."Document Type"::"Credit Memo";
+            end;
+
             SalesLineT."Sell-to Customer No." := GetValueAsText(JToken, 'Sell_to_Customer_No_');
             SalesLineT."Document No." := GetValueAsText(JToken, 'Document_No_');
             //Linea += 10000;
@@ -1143,10 +1212,12 @@ codeunit 90100 Importaciones
             SalesLineT."Description 2" := GetValueAsText(JToken, 'Description_2');
             SalesLineT."Unit of Measure" := GetValueAsText(JToken, 'Unit_of_Measure');
             SalesLineT."Quantity" := GetValueAsDecimal(JToken, 'Quantity');
+            SalesLineT."VAT Prod. Posting Group" := GetValueAsText(JToken, 'VAT_Prod__Posting_Group');
             //SalesLineT."Outstanding Quantity":=GetValueAsText(JToken, 'Outstanding_Quantity');
             // SalesLineT."Qty. to Invoice":=GetValueAsText(JToken, 'Qty__to_Invoice');
             // SalesLineT."Qty. to Ship":=GetValueAsText(JToken, 'Qty__to_Ship');
             SalesLineT."Unit Price" := GetValueAsDecimal(JToken, 'Unit_Price');
+            SalesLineT."Valor Compra" := GetValueAsDecimal(JToken, 'Valor_Compra');
             // SalesLineT."Unit Cost (LCY)":=GetValueAsText(JToken, 'Unit_Cost_LCY');
             // SalesLineT."VAT %":=GetValueAsText(JToken, 'VAT__');
             SalesLineT."Line Discount %" := GetValueAsDecimal(JToken, 'Line_Discount__');
@@ -1312,11 +1383,15 @@ codeunit 90100 Importaciones
             FacturasL := SaleslineT;
             If FacturasL.Insert() Then begin
                 FacturasL.Validate("No.", SalesLineT."No.");
+                If SalesLineT."VAT Prod. Posting Group" <> ' ' then
+                    FacturasL.Validate("VAT Prod. Posting Group", SalesLineT."VAT Prod. Posting Group");
                 FacturasL.Description := SalesLineT.Description;
                 FacturasL."Description 2" := SalesLineT."Description 2";
                 FacturasL.Validate(Quantity, SalesLineT.Quantity);
                 FacturasL.Validate("Unit Price", SalesLineT."Unit Price");
                 FacturasL.Validate("Line Discount %", SalesLineT."Line Discount %");
+                if SalesLineT."Valor Compra" <> 0 then
+                    FacturasL.Validate("Valor Compra", SalesLineT."Valor Compra");
                 FacturasL.Modify();
             end
         end;
@@ -1886,8 +1961,9 @@ codeunit 90100 Importaciones
     end;
 
 
-
-
-
-
 }
+
+
+
+
+
