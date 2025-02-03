@@ -34,7 +34,12 @@ codeunit 90101 Eventos
         Cust: Record Customer;
         VatRegNo: Text[20];
     begin
-        Rec."VAT Registration No." := Rec."Succeeded VAT Registration No.";
+        If Cust.Get(Rec."Sell-to Customer No.") then begin
+            if Cust."VAT Registration No." <> Rec."VAT Registration No." then
+                Cust."VAT Registration No." := '';
+            Cust.Modify();
+        end;
+        Rec."Succeeded VAT Registration No." := Rec."VAT Registration No.";
     end;
     // OnAfterValidateEvent Unit Cost (LCY) Sales Line
     [EventSubscriber(ObjectType::Table, Database::"Sales Line", 'OnAfterValidateEvent', 'Unit Cost (LCY)', false, false)]
@@ -367,6 +372,18 @@ codeunit 90101 Eventos
         If SalesLine."Apply REBU" then
             VATAmountLine."Valor Compra" += SalesLine."Valor Compra";
 
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnBeforeValidatePostingAndDocumentDate', '', false, false)]
+    local procedure OnBeforeValidatePostingAndDocumentDate(var SalesHeader: Record "Sales Header"; CommitIsSuppressed: Boolean)
+    var
+        Cust: Record Customer;
+    begin
+        If Cust.Get(SalesHeader."Sell-to Customer No.") then
+            if Cust."VAT Registration No." <> SalesHeader."VAT Registration No." then begin
+                Cust."VAT Registration No." := '';
+                Cust.Modify();
+            end;
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnBeforePostCustomerEntry', '', false, false)]

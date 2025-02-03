@@ -1132,6 +1132,29 @@ codeunit 90100 Importaciones
                 Pedido.Validate("Bill-to Country/Region Code", SalesHeaderT."Bill-to Country/Region Code");
             if SalesHeaderT."VAT Registration No." <> '' then
                 Pedido."VAT Registration No." := SalesHeaderT."VAT Registration No.";
+            //fechas
+            if SalesHeaderT."Due Date" <> 0D Then
+                Pedido."Due Date" := SalesHeaderT."Due Date";
+            if SalesHeaderT."Quote Valid Until Date" <> 0D Then
+                Pedido."Quote Valid Until Date" := SalesHeaderT."Quote Valid Until Date";
+            if SalesHeaderT."Quote Accepted Date" <> 0D Then
+                Pedido."Quote Accepted Date" := SalesHeaderT."Quote Accepted Date";
+            if SalesHeaderT."Prepayment Due Date" <> 0D Then
+                Pedido."Prepayment Due Date" := SalesHeaderT."Prepayment Due Date";
+            if SalesHeaderT."Prepmt. Pmt. Discount Date" <> 0D Then
+                Pedido."Prepmt. Pmt. Discount Date" := SalesHeaderT."Prepmt. Pmt. Discount Date";
+            if SalesHeaderT."Requested Delivery Date" <> 0D Then
+                Pedido."Requested Delivery Date" := SalesHeaderT."Requested Delivery Date";
+            if SalesHeaderT."Promised Delivery Date" <> 0D Then
+                Pedido."Promised Delivery Date" := SalesHeaderT."Promised Delivery Date";
+            if SalesHeaderT."Posting Date" <> 0D Then
+                Pedido."Posting Date" := SalesHeaderT."Posting Date";
+            if SalesHeaderT."Document Date" <> 0D Then
+                Pedido."Document Date" := SalesHeaderT."Document Date";
+            if SalesHeaderT."Shipment Date" <> 0D Then
+                Pedido."Shipment Date" := SalesHeaderT."Shipment Date";
+            if SalesHeaderT."Payment Terms Code" <> '' then
+                Pedido."Payment Terms Code" := SalesHeaderT."Payment Terms Code";
             Pedido.Modify();
             SalesHeaderT."No." := Pedido."No.";
 
