@@ -387,6 +387,153 @@ codeunit 90101 Eventos
             end;
     end;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnAfterPostSalesDoc', '', false, false)]
+    local procedure OnAfterPostSalesDoc(var SalesHeader: Record "Sales Header";
+    var GenJnlPostLine: Codeunit "Gen. Jnl.-Post Line"; SalesShptHdrNo: Code[20]; RetRcpHdrNo: Code[20];
+    SalesInvHdrNo: Code[20]; SalesCrMemoHdrNo: Code[20]; CommitIsSuppressed: Boolean; InvtPickPutaway:
+    Boolean; var CustLedgerEntry: Record "Cust. Ledger Entry"; WhseShip: Boolean; WhseReceiv: Boolean; PreviewMode: Boolean)
+    var
+        SalesInvLines: Record "Sales Invoice Line";
+        SalesCrMemoLines: Record "Sales Cr.Memo Line";
+        TotalSales: Decimal;
+        TotalPurchases: Decimal;
+        Margen: Decimal;
+        Base: Decimal;
+        Currency: Record Currency;
+        GlAccountVenta: Code[20];
+        GlAccountIva: Code[20];
+        ConfPostingSetup: Record "General Posting Setup";
+        VatPostingSetup: Record "VAT Posting Setup";
+        DocumentNo: Code[20];
+    begin
+        //Todo
+        //Pongo 21%, a corregir
+        If Not Currency.Get(SalesHeader."Currency Code") Then
+            Currency.InitRoundingPrecision();
+        If SalesInvHdrNo <> '' Then begin
+            DocumentNo := SalesInvHdrNo;
+            SalesInvLines.SetRange("Document No.", SalesInvHdrNo);
+            SalesInvLines.SetRange("Apply REBU", true);
+            SalesInvLines.SetRange("VAT %", 0);
+            If SalesInvLines.FindSet() Then begin
+                repeat
+                    If SalesInvLines.Type = SalesInvLines.Type::"G/L Account" then begin
+                        GlAccountVenta := SalesInvLines."No.";
+
+                    end else begin
+                        ConfPostingSetup.Get(SalesInvLines."Gen. Prod. Posting Group", SalesInvLines."Gen. Bus. Posting Group");
+                        If GlAccountVenta = '' Then begin
+                            ConfPostingSetup.TestField("Sales Account");
+                            GlAccountVenta := ConfPostingSetup."Sales Account";
+                        end;
+
+                    end;
+                    VatPostingSetup.Get(SalesInvLines."VAT Bus. Posting Group", SalesInvLines."VAT Prod. Posting Group");
+                    if GlAccountIva = '' Then begin
+                        VatPostingSetup.TestField("Sales VAT Account");
+                        GlAccountIva := VatPostingSetup."Sales VAT Account";
+                    end;
+                    TotalSales += SalesInvLines."Amount"; // Precio de venta IVA incluido
+                    TotalPurchases += SalesInvLines."Valor Compra"; // Precio de compra
+                until SalesInvLines.Next() = 0;
+                Margen := TotalSales - TotalPurchases;
+                Base := Round(Margen / 1.21, Currency."Amount Rounding Precision");
+            end;
+        end;
+        If SalesCrMemoHdrNo <> '' Then begin
+            DocumentNo := SalesCrMemoHdrNo;
+            SalesCrMemoLines.SetRange("Document No.", SalesCrMemoHdrNo);
+            SalesCrMemoLines.SetRange("Apply REBU", true);
+            SalesCrMemoLines.SetRange("VAT %", 0);
+            If SalesCrMemoLines.FindSet() Then begin
+                repeat
+                    If SalesInvLines.Type = SalesInvLines.Type::"G/L Account" then begin
+                        GlAccountVenta := SalesInvLines."No.";
+
+                    end else begin
+                        ConfPostingSetup.Get(SalesInvLines."Gen. Prod. Posting Group", SalesInvLines."Gen. Bus. Posting Group");
+                        If GlAccountVenta = '' Then begin
+                            ConfPostingSetup.TestField("Sales Account");
+                            GlAccountVenta := ConfPostingSetup."Sales Account";
+                        end;
+
+                    end;
+                    VatPostingSetup.Get(SalesInvLines."VAT Bus. Posting Group", SalesInvLines."VAT Prod. Posting Group");
+                    if GlAccountIva = '' Then begin
+                        VatPostingSetup.TestField("Sales VAT Account");
+                        GlAccountIva := VatPostingSetup."Sales VAT Account";
+                    end;
+                    TotalSales += SalesCrMemoLines."Amount"; // Precio de venta IVA incluido
+                    TotalPurchases += SalesCrMemoLines."Valor Compra"; // Precio de compra
+                until SalesCrMemoLines.Next() = 0;
+                Margen := TotalSales - TotalPurchases;
+                Base := -Round(Margen / 1.21, Currency."Amount Rounding Precision");
+            end;
+        end;
+        If Base <> 0 Then begin
+            GenerarApuntrContable(GlAccountVenta, GlAccountIva, Base, DocumentNo,
+            CustLedgerEntry."Journal Templ. Name", CustLedgerEntry."Journal Batch Name",
+            CustLedgerEntry."Posting Date", CustLedgerEntry.Description, CustLedgerEntry."Reason Code",
+            CustLedgerEntry."Currency Code", CustLedgerEntry."Global Dimension 1 Code",
+            CustLedgerEntry."Global Dimension 2 Code", CustLedgerEntry."Dimension Set ID", CustLedgerEntry."Source Code"
+            , CustLedgerEntry."Customer No.");
+        end;
+    end;
+
+    local procedure GenerarApuntrContable(GlAccountVenta: Code[20];
+    GlAccountIva: Code[20]; Base: Decimal; DocumentNo: Code[20];
+    par_Diario: Code[10]; par_Seccion: Code[10];
+    podingDate: Date; PostrDescripcion: Text[50]; ReasonCode: Code[10]; CurrencyCode: Code[10];
+    Dim1: Code[20]; Dim2: Code[20]; DimSetEntry: Integer; SourceCode: Code[20]; bilToCustomerNo: Code[20])
+
+    var
+        GenJnlLine: Record "Gen. Journal Line";
+        GenJnlBatch: Record "Gen. Journal Batch";
+        GenJnlTemplate: Record "Gen. Journal Template";
+        GenJnlPostLine: Codeunit "Gen. Jnl.-Post Line";
+        Currency: Record Currency;
+    begin
+        // Get the default general journal template and batch
+        If Not Currency.Get(CurrencyCode) Then
+            Currency.InitRoundingPrecision();
+        // Initialize the general journal line for the sales account
+        GenJnlLine.INIT;
+        GenJnlLine."Journal Template Name" := par_Diario;
+        GenJnlLine."Journal Batch Name" := par_Seccion;
+        GenJnlLine."Posting Date" := podingDate;
+        GenJnlLine."Document Date" := podingDate;
+
+        GenJnlLine.Description := PostrDescripcion;
+
+        GenJnlLine."Reason Code" := ReasonCode;
+        GenJnlLine."Document Type" := GenJnlLine."Document Type"::" ";
+        GenJnlLine."Document No." := DocumentNo;
+        GenJnlLine."Account Type" := GenJnlLine."Account Type"::"G/L Account";
+        GenJnlLine."Account No." := GlAccountVenta;
+        GenJnlLine."System-Created Entry" := true;
+        GenJnlLine.Amount := Round(Base * 0.21, Currency."Amount Rounding Precision");
+        GenJnlLine."Source Currency Code" := CurrencyCode;
+        GenJnlLine."Source Currency Amount" := ROUND(Base * 0.21, Currency."Amount Rounding Precision");
+        GenJnlLine."Gen. Posting Type" := GenJnlLine."Gen. Posting Type"::" ";
+        GenJnlLine."Gen. Bus. Posting Group" := '';
+        GenJnlLine."Gen. Prod. Posting Group" := '';
+        GenJnlLine."VAT Bus. Posting Group" := '';
+        GenJnlLine."VAT Prod. Posting Group" := '';
+        GenJnlLine."Shortcut Dimension 1 Code" := Dim1;
+        GenJnlLine."Shortcut Dimension 2 Code" := Dim2;
+        GenJnlLine."Bal. Account Type" := GenJnlLine."Bal. Account Type"::"G/L Account";
+        GenJnlLine."Bal. Account No." := GlAccountIva;
+        GenJnlLine."Dimension Set ID" := DimSetEntry;
+        GenJnlLine."Source Code" := "SourceCode";
+        GenJnlLine."Bill-to/Pay-to No." := bilToCustomerNo;
+        GenJnlLine."Source Type" := GenJnlLine."Source Type"::Customer;
+        GenJnlLine."Source No." := bilToCustomerNo;
+        GenJnlLine."Posting No. Series" := '';
+        GenJnlPostLine.RunWithCheck(GenJnlLine);
+
+
+    end;
+
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnBeforePostCustomerEntry', '', false, false)]
     local procedure OnBeforePostCustomerEntry(var GenJnlLine: Record "Gen. Journal Line"; var SalesHeader: Record "Sales Header"; var TotalSalesLine: Record "Sales Line"; var TotalSalesLineLCY: Record "Sales Line"; CommitIsSuppressed: Boolean; PreviewMode: Boolean; var GenJnlPostLine: Codeunit "Gen. Jnl.-Post Line")
     var
