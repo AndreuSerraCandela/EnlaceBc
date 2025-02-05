@@ -28,19 +28,20 @@ codeunit 90101 Eventos
         end;
     end;
     // Validate succsess Vat Registruion No en Sales Header
-    [EventSubscriber(ObjectType::Table, Database::"Sales Header", 'OnAfterValidateEvent', 'VAT Registration No.', false, false)]
-    procedure ValidateVatRegNo(var Rec: Record "Sales Header"; var xRec: Record "Sales Header"; CurrFieldNo: Integer)
+    [EventSubscriber(ObjectType::Table, Database::"Sales Header", 'OnBeforeValidateVATRegistrationNo', '', false, false)]
+    local procedure OnBeforeValidateVATRegistrationNo(var SalesHeader: Record "Sales Header"; var IsHandled: Boolean)
     var
         Cust: Record Customer;
-        VatRegNo: Text[20];
     begin
-        If Cust.Get(Rec."Sell-to Customer No.") then begin
-            if Cust."VAT Registration No." <> Rec."VAT Registration No." then
-                Cust."VAT Registration No." := '';
-            Cust.Modify();
+        IsHandled := true;
+        If Cust.Get(SalesHeader."Sell-to Customer No.") then begin
+            if (Cust."VAT Registration No." <> SalesHeader."VAT Registration No.") and
+            (SalesHeader."Sell-to Customer Name" = Cust.Name) then
+                Message('El Nombre del cliente coincide con el de la cabecera de venta, pero el NIF, no');
         end;
-        Rec."Succeeded VAT Registration No." := Rec."VAT Registration No.";
+        SalesHeader."Succeeded VAT Registration No." := SalesHeader."VAT Registration No.";
     end;
+
     // OnAfterValidateEvent Unit Cost (LCY) Sales Line
     [EventSubscriber(ObjectType::Table, Database::"Sales Line", 'OnAfterValidateEvent', 'Unit Cost (LCY)', false, false)]
     procedure ValidateUnitCost(var Rec: Record "Sales Line"; var xRec: Record "Sales Line"; CurrFieldNo: Integer)
@@ -305,7 +306,7 @@ codeunit 90101 Eventos
         TotalBaseAmount += NoTaxableEntry."Base (LCY)";
         LedgerEntryRecRef.SetTable(CustLedgerEntry);
         CustLedgerEntry.CalcFields(Amount);
-        TotalBaseAmount := -CustLedgerEntry.Amount + TotalVATAmount;
+        TotalBaseAmount := -CustLedgerEntry.Amount - TotalVATAmount;
     end;
 
 
