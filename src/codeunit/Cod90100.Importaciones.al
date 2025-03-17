@@ -869,6 +869,7 @@ codeunit 90100 Importaciones
         Pedido: Record "Sales Header";
         IdType: Text;
         InvoiceType: Text;
+        IdSpecial: Text;
     begin
         JPedidoToken.ReadFrom(Data);
         JPedidoObj := JPedidoToken.AsObject();
@@ -1062,7 +1063,44 @@ codeunit 90100 Importaciones
             //SalesHeaderT."Due Date Modified":=GetValueAsText(JToken, 'Due_Date_Modified');
             // SalesHeaderT."Invoice Type":=GetValueAsText(JToken, 'Invoice_Type');
             // SalesHeaderT."Cr. Memo Type":=GetValueAsText(JToken, 'Cr__Memo_Type');
-            // SalesHeaderT."Special Scheme Code":=GetValueAsText(JToken, 'Special_Scheme_Code');
+            IdSpecial := GetValueAsText(JToken, 'Special_Scheme_Code');
+            Case IdSpecial Of
+                '00':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"01 General";
+                '01':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"02 Export";
+                '03':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"03 Special System";
+                '04':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"04 Gold";
+                '05':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"05 Travel Agencies";
+                '06':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"06 Groups of Entities";
+                '07':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"07 Special Cash";
+                '08':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"08  IPSI / IGIC";
+                '09':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"09 Travel Agency Services";
+                '10':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"10 Third Party";
+                '11':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"11 Business Withholding";
+                '12':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"12 Business not Withholding";
+                '13':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"13 Business Withholding and not Withholding";
+                '14':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"14 Invoice Work Certification";
+                '15':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"15 Invoice of Consecutive Nature";
+                '16':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"16 First Half 2017";
+                '17':
+                    SalesHeaderT."Special Scheme Code" := SalesHeaderT."Special Scheme Code"::"17 Operations Under The One-Stop-Shop Regime";
+            End;
+
             SalesHeaderT."Operation Description" := GetValueAsText(JToken, 'Operation_Description');
             // SalesHeaderT."Correction Type":=GetValueAsText(JToken, 'Correction_Type');
             SalesHeaderT."Operation Description 2" := GetValueAsText(JToken, 'Operation_Description_2');
@@ -1206,6 +1244,8 @@ codeunit 90100 Importaciones
                 Pedido."Shipment Date" := SalesHeaderT."Shipment Date";
             if SalesHeaderT."Payment Terms Code" <> '' then
                 Pedido."Payment Terms Code" := SalesHeaderT."Payment Terms Code";
+            if SalesHeaderT."Special Scheme Code".AsInteger() <> 0 Then
+                Pedido."Special Scheme Code" := SalesHeaderT."Special Scheme Code";
             Pedido.Modify();
             SalesHeaderT."No." := Pedido."No.";
 
