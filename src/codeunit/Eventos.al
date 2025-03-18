@@ -379,12 +379,27 @@ codeunit 90101 Eventos
     local procedure OnBeforeValidatePostingAndDocumentDate(var SalesHeader: Record "Sales Header"; CommitIsSuppressed: Boolean)
     var
         Cust: Record Customer;
+        SalesLine: Record "Sales Line";
+        It: Decimal;
     begin
         If Cust.Get(SalesHeader."Sell-to Customer No.") then
             if Cust."VAT Registration No." <> SalesHeader."VAT Registration No." then begin
                 Cust."VAT Registration No." := '';
                 Cust.Modify();
             end;
+        If salesHeader."Importe total" <> 0 Then begin
+            SalesLine.SetRange("Document Type", SalesHeader."Document Type");
+            SalesLine.SetRange("Document No.", SalesHeader."No.");
+            if SalesLine.FindSet() then begin
+                repeat
+                    It += SalesLine."Line Amount";
+                until SalesLine.Next() = 0;
+            end;
+            If (Abs(It) - Abs(SalesHeader."Importe total")) > 0.01 Then
+                Error('El importe total no coincide con la suma de las líneas');
+
+        end
+
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnAfterPostSalesDoc', '', false, false)]

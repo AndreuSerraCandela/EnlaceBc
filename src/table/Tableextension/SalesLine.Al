@@ -62,3 +62,14 @@ tableextension 90107 SalesCrLineExtension extends "Sales Cr.Memo Line"
         }
     }
 }
+tableextension 90109 SalesHeaderExtension extends "Sales Header"
+{
+    fields
+    {
+
+        field(50101; "Importe total"; Decimal)
+        {
+            DataClassification = ToBeClassified;
+        }
+    }
+}

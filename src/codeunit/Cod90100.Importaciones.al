@@ -1076,6 +1076,7 @@ codeunit 90100 Importaciones
             SalesHeaderT."Applies-to Bill No." := GetValueAsText(JToken, 'Applies_to_Bill_No_');
             SalesHeaderT."Cust. Bank Acc. Code" := GetValueAsText(JToken, 'Cust__Bank_Acc__Code');
             SalesHeaderT."VAT Registration No." := GetValueAsText(JToken, 'VAT_Registration_No_');
+            SalesHeaderT."Importe total" := GetValueAsDecimal(JToken, 'importe_total');
             IdType := GetValueAsText(JToken, 'ID_Type');
             Case IdType Of
                 '02':
@@ -1206,6 +1207,9 @@ codeunit 90100 Importaciones
                 Pedido."Shipment Date" := SalesHeaderT."Shipment Date";
             if SalesHeaderT."Payment Terms Code" <> '' then
                 Pedido."Payment Terms Code" := SalesHeaderT."Payment Terms Code";
+            if SalesHeaderT."Posting Description" <> '' then
+                Pedido."Posting Description" := SalesHeaderT."Posting Description";
+            Pedido."Importe total" := SalesHeaderT."Importe total";
             Pedido.Modify();
             SalesHeaderT."No." := Pedido."No.";
 
