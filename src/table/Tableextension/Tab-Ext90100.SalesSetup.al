@@ -8,6 +8,12 @@ tableextension 90100 SalesSetup extends "Sales & Receivables Setup"
             DataClassification = ToBeClassified;
             TableRelation = "Customer Templ.".Code;
         }
+        field(90101; "Cuenta Vta x defecto"; Code[20])
+        {
+            Caption = 'Cuenta Vta x defecto';
+            DataClassification = ToBeClassified;
+            TableRelation = "G/L Account"."No.";
+        }
     }
 }
 tableextension 90101 PurchSetup extends 312

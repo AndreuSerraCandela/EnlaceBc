@@ -15,6 +15,14 @@ tableextension 90102 SalesLineExtension extends "Sales Line"
                 UpdateVATAmounts();
             end;
         }
+        field(50102; "IMEI"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50103; "IMEI2"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
     }
 }
 tableextension 90105 VatAmoutLine extends "Vat Amount Line"
@@ -44,6 +52,14 @@ tableextension 90108 SalesInvLineExtension extends "Sales Invoice Line"
         {
             DataClassification = ToBeClassified;
         }
+        field(50102; "IMEI"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50103; "IMEI2"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
     }
 }
 tableextension 90107 SalesCrLineExtension extends "Sales Cr.Memo Line"
@@ -59,6 +75,14 @@ tableextension 90107 SalesCrLineExtension extends "Sales Cr.Memo Line"
         {
             DataClassification = ToBeClassified;
 
+        }
+        field(50102; "IMEI"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(50103; "IMEI2"; Code[20])
+        {
+            DataClassification = ToBeClassified;
         }
     }
 }

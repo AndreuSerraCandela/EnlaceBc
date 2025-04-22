@@ -11,6 +11,10 @@ pageextension 90100 SalesSetup extends "Sales & Receivables Setup"
             {
                 ApplicationArea = All;
             }
+            field("Cuenta Vta x defecto"; Rec."Cuenta Vta x defecto")
+            {
+                ApplicationArea = All;
+            }
         }
     }
 }

@@ -6,6 +6,10 @@ tableextension 90104 VatProdGroupExtension extends "VAT Product Posting Group"
         {
             DataClassification = ToBeClassified;
         }
+        field(50101; "Grupo equivalente"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
     }
 }
 tableextension 90106 VatPostingSetup extends "VAT Posting Setup"
@@ -29,6 +33,11 @@ pageextension 90105 "VATProductGroups" extends "VAT Product Posting Groups"
             {
                 ApplicationArea = All;
                 ToolTip = 'Indica si el grupo de IVA aplica REBU';
+            }
+            field("Grupo equivalente"; Rec."Grupo equivalente")
+            {
+                ApplicationArea = All;
+                ToolTip = 'Indica el grupo de IVA equivalente para la importación excel';
             }
         }
     }

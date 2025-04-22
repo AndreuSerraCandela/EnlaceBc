@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Microsoft cloud sandbox",
+            "name": "PlanDe",
             "request": "launch",
             "type": "al",
             //"environmentType": "Production",
@@ -10,6 +10,15 @@
             "startupCompany": "Pruebas PlanDe",
             "startupObjectId": 22,
             "startupObjectType": "Page",
+            "breakOnError": "All",
+            "launchBrowser": true,
+            "enableLongRunningSqlStatements": true,
+            "enableSqlInformationDebugger": true
+        },
+        {
+            "name": "Local",
+            "request": "launch",
+            "type": "al",
             "breakOnError": "All",
             "launchBrowser": true,
             "enableLongRunningSqlStatements": true,
