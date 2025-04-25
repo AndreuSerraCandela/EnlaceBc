@@ -52,6 +52,7 @@ codeunit 90100 Importaciones
         Unit: Record "Unit of Measure";
         ItemUnit: Record "Item Unit of Measure";
         i: Integer;
+        Deleted: Boolean;
     begin
 
         JItemToken.ReadFrom(Data);
@@ -66,6 +67,7 @@ codeunit 90100 Importaciones
         foreach JToken in JItems do begin
 
             ItemT."No." := GetValueAsText(JToken, 'No_');
+            Deleted := GetValueAsBoolean(JToken, 'Deleted');
             ItemT."No. 2" := GetValueAsText(JToken, 'No__2');
             ItemT."Description" := GetValueAsText(JToken, 'Description');
             ItemT."Search Description" := GetValueAsText(JToken, 'Search_Description');
@@ -295,21 +297,28 @@ codeunit 90100 Importaciones
                 Item.Modify();
                 ItemT."No." := Item."No.";
             end else begin
-                ItemRecRef.Gettable(ItemT);
-                EmptyItemRecRef.Open(Database::Item);
-                EmptyItemRecRef.Init();
-                If Item.Get(Item."No.") Then begin
-                    ProdRecRef.GetTable(Item);
-                    for i := 1 to ItemRecRef.FieldCount do begin
-                        ItemFldRef := ItemRecRef.FieldIndex(i);
-                        ProdFldRef := ProdRecRef.Field(ItemFldRef.Number);
-                        EmptyItemFldRef := EmptyItemRecRef.Field(ItemFldRef.Number);
-                        if (ItemFldRef.Value <> EmptyItemFldRef.Value)
-                            then
-                            ProdFldRef.Value := ItemFldRef.Value;
-                    end;
+                if not Deleted then begin
+                    ItemRecRef.Gettable(ItemT);
+                    EmptyItemRecRef.Open(Database::Item);
+                    EmptyItemRecRef.Init();
+                    If Item.Get(ItemT."No.") Then begin
+                        ProdRecRef.GetTable(Item);
+                        for i := 1 to ItemRecRef.FieldCount do begin
+                            ItemFldRef := ItemRecRef.FieldIndex(i);
+                            ProdFldRef := ProdRecRef.Field(ItemFldRef.Number);
+                            EmptyItemFldRef := EmptyItemRecRef.Field(ItemFldRef.Number);
+                            if (ItemFldRef.Value <> EmptyItemFldRef.Value)
+                                then
+                                ProdFldRef.Value := ItemFldRef.Value;
+                        end;
 
-                    ProdRecRef.Modify();
+                        ProdRecRef.Modify();
+                        ItemT."No." := Item."No.";
+                    end;
+                end else begin
+                    If Item.Get(ItemT."No.") Then Item.Delete();
+                    ItemUnit.SetRange("Item No.", ItemT."No.");
+                    ItemUnit.DeleteAll();
                 end;
             end;
         end;
@@ -491,6 +500,7 @@ codeunit 90100 Importaciones
         CustomerTemplFldRef: FieldRef;
         EmptyCustomerFldRef: FieldRef;
         i: Integer;
+        Deleted: Boolean;
     begin
 
         JCustToken.ReadFrom(Data);
@@ -505,6 +515,7 @@ codeunit 90100 Importaciones
         foreach JToken in JCustomers do begin
 
             CustT."No." := GetValueAsText(JToken, 'No_');
+            Deleted := GetValueAsBoolean(JToken, 'Deleted');
             CustT."Name" := GetValueAsText(JToken, 'Name');
             CustT."Search Name" := GetValueAsText(JToken, 'Search_Name');
             CustT."Name 2" := GetValueAsText(JToken, 'Name_2');
@@ -641,24 +652,29 @@ codeunit 90100 Importaciones
                 CustomerTempl.Get(SalesSetup.CustomerTemplate);
                 CustomerTemplMgt.ApplyCustomerTemplate(Cust, CustomerTempl);
             end else begin
-                CustomerRecRef.Gettable(CustT);
-                EmptyCustomerRecRef.Open(Database::Customer);
-                EmptyCustomerRecRef.Init();
-                If Cust.Get(CustT."No.") Then begin
-                    CustRecRef.GetTable(Cust);
-                    for i := 1 to CustomerRecRef.FieldCount do begin
-                        CustomerFldRef := CustomerRecRef.FieldIndex(i);
-                        CustFldRef := CustRecRef.Field(CustomerFldRef.Number);
-                        EmptyCustomerFldRef := EmptyCustomerRecRef.Field(CustomerFldRef.Number);
-                        if (CustomerFldRef.Value <> EmptyCustomerFldRef.Value)
-                            then
-                            CustFldRef.Value := CustomerFldRef.Value;
+                if not Deleted then begin
+                    CustomerRecRef.Gettable(CustT);
+                    EmptyCustomerRecRef.Open(Database::Customer);
+                    EmptyCustomerRecRef.Init();
+                    If Cust.Get(CustT."No.") Then begin
+                        CustRecRef.GetTable(Cust);
+                        for i := 1 to CustomerRecRef.FieldCount do begin
+                            CustomerFldRef := CustomerRecRef.FieldIndex(i);
+                            CustFldRef := CustRecRef.Field(CustomerFldRef.Number);
+                            EmptyCustomerFldRef := EmptyCustomerRecRef.Field(CustomerFldRef.Number);
+                            if (CustomerFldRef.Value <> EmptyCustomerFldRef.Value)
+                                then
+                                CustFldRef.Value := CustomerFldRef.Value;
+                        end;
+
+                        CustRecRef.Modify();
                     end;
-
-                    CustRecRef.Modify();
+                    CustomerRecRef.Close();
+                    CustT."No." := Cust."No.";
+                end else begin
+                    If Cust.Get(CustT."No.") Then Cust.Delete();
+                    CustT."No." := '';
                 end;
-
-                CustT."No." := Cust."No.";
             end;
         end;
         exit(CustT."No.");
@@ -2051,6 +2067,15 @@ codeunit 90100 Importaciones
                 exit(JToken.AsValue().AsInteger());
     end;
 
+    procedure SelectJsonTokenDate(JObject: JsonObject; Path: Text): Date
+    var
+        JToken: JsonToken;
+    begin
+        if JObject.SelectToken(Path, JToken) then
+            if Strlen(JToken.AsValue().AsText()) > 0 then
+                exit(JToken.AsValue().AsDate());
+    end;
+
     local procedure GetValueAsBoolean(JToken: JsonToken; ParamString: Text): Boolean
     var
         JObject: JsonObject;
@@ -2076,6 +2101,125 @@ codeunit 90100 Importaciones
         If JToken.IsObject() = false Then exit(0);
         JObject := JToken.AsObject();
         exit(SelectJsonTokenInteger(JObject, ParamString));
+    end;
+
+    /// <summary>
+    /// insertaEmpleados.
+    /// </summary>
+    /// <param name="Data">Text</param>
+    /// <returns>Return value of type Text.</returns>
+    [ServiceEnabled]
+    procedure insertaEmpleados(Data: Text): Text
+    var
+        JEmpToken: JsonToken;
+        JEmpObj: JsonObject;
+        JEmps: JsonArray;
+        JEmp: JsonObject;
+        EmpT: Record Employee temporary;
+        Emp: Record Employee;
+        JToken: JsonToken;
+        Texto: Text;
+        EmpRecRef: RecordRef;
+        EmployeeRecRef: RecordRef;
+        EmptyEmpRecRef: RecordRef;
+        EmpFldRef: FieldRef;
+        EmptyEmpFldRef: FieldRef;
+        i: Integer;
+        Deleted: Boolean;
+        EmployeeFldRef: FieldRef;
+        HumanResSetup: Record "Human Resources Setup";
+        NoSeriesMgt: Codeunit "No. Series";
+    begin
+        JEmpToken.ReadFrom(Data);
+        JEmpObj := JEmpToken.AsObject();
+
+        JEmpObj.SelectToken('Employees', JEmpToken);
+        JEmps := JEmpToken.AsArray();
+        JEmps.WriteTo(Data);
+
+        foreach JToken in JEmps do begin
+            EmpT."No." := GetValueAsText(JToken, 'No_');
+            Deleted := GetValueAsBoolean(JToken, 'Deleted');
+            EmpT."First Name" := GetValueAsText(JToken, 'First_Name');
+            EmpT.Name := GetValueAsText(JToken, 'Name');
+            EmpT."Second Family Name" := GetValueAsText(JToken, 'Second_Family_Name');
+            EmpT."First Family Name" := GetValueAsText(JToken, 'First_Family_Name');
+            EmpT."Middle Name" := GetValueAsText(JToken, 'Middle_Name');
+            EmpT."Last Name" := GetValueAsText(JToken, 'Last_Name');
+            EmpT."Job Title" := GetValueAsText(JToken, 'Job_Title');
+            EmpT."Search Name" := GetValueAsText(JToken, 'Search_Name');
+            EmpT."Address" := GetValueAsText(JToken, 'Address');
+            EmpT."Address 2" := GetValueAsText(JToken, 'Address_2');
+            EmpT."City" := GetValueAsText(JToken, 'City');
+            EmpT."Post Code" := GetValueAsText(JToken, 'Post_Code');
+            EmpT."Country/Region Code" := GetValueAsText(JToken, 'Country_Region_Code');
+            EmpT."Phone No." := GetValueAsText(JToken, 'Phone_No_');
+            EmpT."Mobile Phone No." := GetValueAsText(JToken, 'Mobile_Phone_No_');
+            EmpT."E-Mail" := GetValueAsText(JToken, 'E_Mail');
+            EmpT."Company E-Mail" := GetValueAsText(JToken, 'Company_E_Mail');
+            EmpT."Birth Date" := GetValueAsDate(JToken, 'Birth_Date');
+            EmpT."Social Security No." := GetValueAsText(JToken, 'Social_Security_No_');
+            EmpT."Union Code" := GetValueAsText(JToken, 'Union_Code');
+            EmpT."Union Membership No." := GetValueAsText(JToken, 'Union_Membership_No_');
+            EmpT."Manager No." := GetValueAsText(JToken, 'Manager_No_');
+            EmpT."Emplymt. Contract Code" := GetValueAsText(JToken, 'Emplymt__Contract_Code');
+            EmpT."Statistics Group Code" := GetValueAsText(JToken, 'Statistics_Group_Code');
+            EmpT."Resource No." := GetValueAsText(JToken, 'Resource_No_');
+            EmpT."Extension" := GetValueAsText(JToken, 'Extension');
+            EmpT."Pager" := GetValueAsText(JToken, 'Pager');
+            EmpT."Fax No." := GetValueAsText(JToken, 'Fax_No_');
+            EmpT."Company E-Mail" := GetValueAsText(JToken, 'Company_E_Mail');
+            EmpT."Alt. Address Code" := GetValueAsText(JToken, 'Alt__Address_Code');
+            EmpT."County" := GetValueAsText(JToken, 'County');
+            EmpT."Usuario TPV" := true; //GetValueAsBoolean(JToken, 'Usuario_TPV');
+            EmpT.Password := GetValueAsText(JToken, 'Password');
+            If (EmpT."No." = 'TEMP') or (EmpT."No." = '') Then begin
+
+                HumanResSetup.Get();
+                HumanResSetup.TestField("Employee Nos.");
+                Emp := EmpT;
+                Emp."No. Series" := HumanResSetup."Employee Nos.";
+                Emp."No." := NoSeriesMgt.GetNextNo(HumanResSetup."Employee Nos.", Today, true);
+                Emp.Insert();
+                EmpT."No." := Emp."No.";
+
+            end else begin
+                if not Deleted then begin
+                    EmployeeRecRef.Gettable(EmpT);
+                    EmptyEmpRecRef.Open(Database::Employee);
+                    EmptyEmpRecRef.Init();
+                    if Emp.Get(EmpT."No.") then begin
+                        EmpRecRef.GetTable(Emp);
+                        for i := 1 to EmployeeRecRef.FieldCount do begin
+                            EmployeeFldRef := EmployeeRecRef.FieldIndex(i);
+                            EmpFldRef := EmpRecRef.Field(EmployeeFldRef.Number);
+                            EmptyEmpFldRef := EmptyEmpRecRef.Field(EmployeeFldRef.Number);
+                            if (EmployeeFldRef.Value <> EmptyEmpFldRef.Value) then
+                                EmpFldRef.Value := EmployeeFldRef.Value;
+                        end;
+                        EmpRecRef.Modify();
+                    end;
+                    EmpRecRef.Close();
+                    EmpT."No." := Emp."No.";
+                end else begin
+                    if Emp.Get(EmpT."No.") then
+                        Emp.Delete();
+                    EmpT."No." := '';
+                end;
+            end;
+        end;
+        exit(EmpT."No.");
+    end;
+
+    local procedure GetValueAsDate(JToken: JsonToken; ParamString: Text): Date
+    var
+        JObject: JsonObject;
+        jValue: Text;
+    begin
+        If JToken.IsObject() = false Then exit(0D);
+        JObject := JToken.AsObject();
+        exit(SelectJsonTokenDate(JObject, ParamString));
+
     end;
 
 
