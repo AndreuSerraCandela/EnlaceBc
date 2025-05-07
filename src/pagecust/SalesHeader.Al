@@ -53,7 +53,7 @@ pageextension 90108 "Sales Invoices Ext" extends "Sales Invoice List"
                     CurrentInvoiceNo: Text;
                     LineNo: Integer;
                     Customer: Record Customer;
-                    NoSeriesMgt: Codeunit NoSeriesManagement;
+                    NoSeriesMgt: Codeunit "No. Series";
                     SalesSetup: Record "Sales & Receivables Setup";
                     CustomerTempl: Record "Customer Templ.";
                     CustomerTemplMgt: Codeunit "Customer Templ. Mgt.";
@@ -114,8 +114,12 @@ pageextension 90108 "Sales Invoices Ext" extends "Sales Invoice List"
                                 // Set order reference from column K (Pedido)
                                 TempExcelBuffer.Get(RowNo, 11); // Columna Pedido
                                 SalesHeader.Validate("Your Reference", TempExcelBuffer."Cell Value as Text");
-
+                                // Set Posting Description from Column D
+                                TempExcelBuffer.Get(RowNo, 4); // Columna Factura
+                                SalesHeader.Validate("Posting Description", TempExcelBuffer."Cell Value as Text");
                                 SalesHeader.Insert(true);
+                                SalesHeader."Posting Description" := TempExcelBuffer."Cell Value as Text";
+                                SalesHeader.Modify();
                                 LineNo := 10000;
                             end;
 
@@ -136,7 +140,15 @@ pageextension 90108 "Sales Invoices Ext" extends "Sales Invoice List"
                             // Set amount
                             TempExcelBuffer.Get(RowNo, 6); // Base Imponible
                             Evaluate(SalesLine."Unit Price", TempExcelBuffer."Cell Value as Text");
-                            SalesLine.Quantity := 1;
+                            SalesLine.Validate(Quantity, 1);
+                            // Set Description from Column N
+                            TempExcelBuffer.Get(RowNo, 14); // Producto
+                            SalesLine.Validate(Description, TempExcelBuffer."Cell Value as Text");
+                            // Set Line Amount from Column H
+                            TempExcelBuffer.Get(RowNo, 8); // Line Amount
+                            Evaluate(SalesLine."Line Amount", TempExcelBuffer."Cell Value as Text");
+                            //Columna G Grupo Equivalente
+                            TempExcelBuffer.Get(RowNo, 7); // Grupo Equivalente
                             VatProdGroup.Reset();
                             VatProdGroup.SetRange("Grupo equivalente", TempExcelBuffer."Cell Value as Text");
                             if VatProdGroup.FindFirst() then
