@@ -433,13 +433,13 @@ codeunit 90101 Eventos
             If SalesInvLines.FindSet() Then begin
                 repeat
                     If SalesInvLines.Type = SalesInvLines.Type::"G/L Account" then begin
-                        GlAccountVenta := SalesInvLines."No.";
+                        GlAccountVenta := '62900001' //TODO: Cambiar por cuenta de gasto de REBU en configuración
 
                     end else begin
                         ConfPostingSetup.Get(SalesInvLines."Gen. Prod. Posting Group", SalesInvLines."Gen. Bus. Posting Group");
                         If GlAccountVenta = '' Then begin
-                            ConfPostingSetup.TestField("Sales Account");
-                            GlAccountVenta := ConfPostingSetup."Sales Account";
+                            ConfPostingSetup.TestField("Cta. Gasto Rebu");
+                            GlAccountVenta := ConfPostingSetup."Cta. Gasto Rebu";
                         end;
 
                     end;
