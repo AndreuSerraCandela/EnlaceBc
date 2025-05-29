@@ -84,6 +84,7 @@ xmlport 90100 Items
                 fieldattribute(Cost_of_Open_Production_Orders; Item."Cost of Open Production Orders") { Occurrence = Optional; }
                 fieldattribute(Application_Wksh__User_ID; Item."Application Wksh. User ID") { Occurrence = Optional; }
                 // fieldattribute(Coupled_to_CRM; Item."Coupled to CRM") { Occurrence = Optional; } //Field 'Coupled to CRM' is marked for removal. Reason: Replaced by flow field Coupled to Dataverse. Tag: 23.0.
+                //cambio de campos
                 fieldattribute(Coupled_to_CRM; Item."Coupled to Dataverse") { Occurrence = Optional; }
                 fieldattribute(Assembly_Policy; Item."Assembly Policy") { Occurrence = Optional; }
                 fieldattribute(GTIN; Item."GTIN") { Occurrence = Optional; }
