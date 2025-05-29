@@ -546,11 +546,38 @@ codeunit 90101 Eventos
         GenJnlLine."Posting No. Series" := '';
         GenJnlPostLine.RunWithCheck(GenJnlLine);
 
-
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnBeforePostCustomerEntry', '', false, false)]
-    local procedure OnBeforePostCustomerEntry(var GenJnlLine: Record "Gen. Journal Line"; var SalesHeader: Record "Sales Header"; var TotalSalesLine: Record "Sales Line"; var TotalSalesLineLCY: Record "Sales Line"; CommitIsSuppressed: Boolean; PreviewMode: Boolean; var GenJnlPostLine: Codeunit "Gen. Jnl.-Post Line")
+    //[Obsolete('Moved to Sales Invoice Posting implementation. Use the new event OnPostLedgerEntryOnBeforeGenJnlPostLine in codeunit 825 "Sales Post Invoice Events".', '19.0')]
+    // [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", 'OnBeforePostCustomerEntry', '', false, false)]
+    // local procedure OnBeforePostCustomerEntry(var GenJnlLine: Record "Gen. Journal Line"; var SalesHeader: Record "Sales Header"; var TotalSalesLine: Record "Sales Line"; var TotalSalesLineLCY: Record "Sales Line"; CommitIsSuppressed: Boolean; PreviewMode: Boolean; var GenJnlPostLine: Codeunit "Gen. Jnl.-Post Line")
+    // var
+    //     Cust: Record Customer;
+    //     VatRegNo: Text[20];
+    // begin
+    //     If Cust.Get(SalesHeader."Sell-to Customer No.") then
+    //         VatRegNo := Cust."VAT Registration No.";
+    //     if SalesHeader."VAT Registration No." = VatRegNo then
+    //         SalesHeader."VAT Registration No." := SalesHeader."Succeeded VAT Registration No.";
+    //     If SalesHeader."VAT Registration No." <> '' then begin
+    //         GenJnlLine."VAT Registration No." := SalesHeader."VAT Registration No.";
+    //         GenJnlLine."Succeeded VAT Registration No." := SalesHeader."VAT Registration No.";
+    //     end else begin
+    //         if GenJnlLine."Succeeded VAT Registration No." <> '' then
+    //             GenJnlLine."VAT Registration No." := GenJnlLine."Succeeded VAT Registration No.";
+    //     end;
+    // end;
+
+    //[Obsolete('Moved to Sales Invoice Posting implementation. Use the new event OnPostLedgerEntryOnBeforeGenJnlPostLine in codeunit 825 "Sales Post Invoice Events".', '19.0')]
+
+    // [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales Post Invoice Events", 'OnPostLedgerEntryOnBeforeGenJnlPostLine', '', false, false)]
+
+    // local procedure OnPostLedgerEntryOnBeforeGenJnlPostLine(var GenJnlLine: Record "Gen. Journal Line"; var SalesHeader: Record "Sales Header"; var TotalSalesLine: Record "Sales Line"; var TotalSalesLineLCY: Record "Sales Line"; PreviewMode: Boolean; SuppressCommit: Boolean; var GenJnlPostLine: Codeunit "Gen. Jnl.-Post Line")
+    // begin
+    // end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales Post Invoice Events", 'OnPostLedgerEntryOnBeforeGenJnlPostLine', '', false, false)]
+    local procedure OnPostLedgerEntryOnBeforeGenJnlPostLine(var GenJnlLine: Record "Gen. Journal Line"; var SalesHeader: Record "Sales Header"; var TotalSalesLine: Record "Sales Line"; var TotalSalesLineLCY: Record "Sales Line"; PreviewMode: Boolean; SuppressCommit: Boolean; var GenJnlPostLine: Codeunit "Gen. Jnl.-Post Line")
     var
         Cust: Record Customer;
         VatRegNo: Text[20];
@@ -566,15 +593,11 @@ codeunit 90101 Eventos
             if GenJnlLine."Succeeded VAT Registration No." <> '' then
                 GenJnlLine."VAT Registration No." := GenJnlLine."Succeeded VAT Registration No.";
         end;
-    end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales Post Invoice Events", 'OnPostLedgerEntryOnBeforeGenJnlPostLine', '', false, false)]
-    local procedure OnPostLedgerEntryOnBeforeGenJnlPostLine(var GenJnlLine: Record "Gen. Journal Line"; var SalesHeader: Record "Sales Header"; var TotalSalesLine: Record "Sales Line"; var TotalSalesLineLCY: Record "Sales Line"; PreviewMode: Boolean; SuppressCommit: Boolean; var GenJnlPostLine: Codeunit "Gen. Jnl.-Post Line")
-    begin
-        If SalesHeader."VAT Registration No." <> '' then begin
-            GenJnlLine."VAT Registration No." := SalesHeader."VAT Registration No.";
-            GenJnlLine."Succeeded VAT Registration No." := SalesHeader."VAT Registration No.";
-        end;
+        // If SalesHeader."VAT Registration No." <> '' then begin
+        //     GenJnlLine."VAT Registration No." := SalesHeader."VAT Registration No.";
+        //     GenJnlLine."Succeeded VAT Registration No." := SalesHeader."VAT Registration No.";
+        // end;
     end;
 
 
