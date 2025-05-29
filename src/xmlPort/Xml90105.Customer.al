@@ -94,7 +94,8 @@ xmlport 90105 Customer
                 fieldattribute(Privacy_Blocked; Customer."Privacy Blocked") { Occurrence = Optional; }
                 fieldattribute(Disable_Search_by_Name; Customer."Disable Search by Name") { Occurrence = Optional; }
                 fieldattribute(Preferred_Bank_Account_Code; Customer."Preferred Bank Account Code") { Occurrence = Optional; }
-                fieldattribute(Coupled_to_CRM; Customer."Coupled to CRM") { Occurrence = Optional; }
+                //   fieldattribute(Coupled_to_CRM; Customer."Coupled to CRM") { Occurrence = Optional; } Field 'Coupled to CRM' is marked for removal. Reason: Replaced by flow field Coupled to Dataverse. Tag: 23.0.
+                fieldattribute(Coupled_to_CRM; Customer."Coupled to Dataverse") { Occurrence = Optional; }
                 fieldattribute(Cash_Flow_Payment_Terms_Code; Customer."Cash Flow Payment Terms Code") { Occurrence = Optional; }
                 fieldattribute(Primary_Contact_No_; Customer."Primary Contact No.") { Occurrence = Optional; }
                 fieldattribute(Contact_Type; Customer."Contact Type") { Occurrence = Optional; }
