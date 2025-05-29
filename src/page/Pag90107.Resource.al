@@ -45,7 +45,8 @@ Page 90107 Resource
                 field(IC_Partner_Purch__G_L_Acc__No_; Rec."IC Partner Purch. G/L Acc. No.") { ApplicationArea = All; }
                 field(Image; Rec."Image") { ApplicationArea = All; }
                 field(Privacy_Blocked; Rec."Privacy Blocked") { ApplicationArea = All; }
-                field(Coupled_to_CRM; Rec."Coupled to CRM") { ApplicationArea = All; }
+                //field(Coupled_to_CRM; Rec."Coupled to CRM") { ApplicationArea = All; } Field 'Coupled to CRM' is marked for removal. Reason: Replaced by flow field Coupled to Dataverse.
+                field(Coupled_to_CRM; Rec."Coupled to Dataverse") { ApplicationArea = All; }
                 field(Use_Time_Sheet; Rec."Use Time Sheet") { ApplicationArea = All; }
                 field(Time_Sheet_Owner_User_ID; Rec."Time Sheet Owner User ID") { ApplicationArea = All; }
                 field(Time_Sheet_Approver_User_ID; Rec."Time Sheet Approver User ID") { ApplicationArea = All; }
