@@ -74,7 +74,8 @@ xmlport 90106 Vendor
                 fieldattribute(Disable_Search_by_Name; Vendor."Disable Search by Name") { Occurrence = Optional; }
                 fieldattribute(Creditor_No_; Vendor."Creditor No.") { Occurrence = Optional; }
                 fieldattribute(Preferred_Bank_Account_Code; Vendor."Preferred Bank Account Code") { Occurrence = Optional; }
-                fieldattribute(Coupled_to_CRM; Vendor."Coupled to CRM") { Occurrence = Optional; }
+                //fieldattribute(Coupled_to_CRM; Vendor."Coupled to CRM") { Occurrence = Optional; } Field 'Coupled to CRM' is marked for removal. Reason: Replaced by flow field Coupled to Dataverse. Tag: 23.0.
+                fieldattribute(Coupled_to_CRM; Vendor."Coupled to Dataverse") { Occurrence = Optional; }
                 fieldattribute(Cash_Flow_Payment_Terms_Code; Vendor."Cash Flow Payment Terms Code") { Occurrence = Optional; }
                 fieldattribute(Primary_Contact_No_; Vendor."Primary Contact No.") { Occurrence = Optional; }
                 fieldattribute(Mobile_Phone_No_; Vendor."Mobile Phone No.") { Occurrence = Optional; }
@@ -99,7 +100,8 @@ xmlport 90106 Vendor
                     VendorRecRef: RecordRef;
                     PurchSetup: Record 312;
                     VendorTemplMgt: Codeunit "Vendor Templ. Mgt.";
-                    NoSeriesMgt: Codeunit NoSeriesManagement;
+                    //NoSeriesMgt: Codeunit NoSeriesManagement;
+                    NoSeriesMgt: Codeunit "No. Series";
                     VendorTempl: Record "Vendor Templ.";
                     VendorFldRef: FieldRef;
                     VendRecRef: RecordRef;

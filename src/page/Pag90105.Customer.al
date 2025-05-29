@@ -82,7 +82,8 @@ Page 90105 Customer
                 field(Privacy_Blocked; Rec."Privacy Blocked") { ApplicationArea = All; }
                 field(Disable_Search_by_Name; Rec."Disable Search by Name") { ApplicationArea = All; }
                 field(Preferred_Bank_Account_Code; Rec."Preferred Bank Account Code") { ApplicationArea = All; }
-                field(Coupled_to_CRM; Rec."Coupled to CRM") { ApplicationArea = All; }
+                //field(Coupled_to_CRM; Rec."Coupled to CRM") { ApplicationArea = All; }Field 'Coupled to CRM' is marked for removal. Reason: Replaced by flow field Coupled to Dataverse. Tag: 23.0.
+                field(Coupled_to_CRM; Rec."Coupled to Dataverse") { ApplicationArea = All; }
                 field(Cash_Flow_Payment_Terms_Code; Rec."Cash Flow Payment Terms Code") { ApplicationArea = All; }
                 field(Primary_Contact_No_; Rec."Primary Contact No.") { ApplicationArea = All; }
                 field(Contact_Type; Rec."Contact Type") { ApplicationArea = All; }

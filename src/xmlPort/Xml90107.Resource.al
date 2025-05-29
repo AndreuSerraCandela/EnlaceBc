@@ -51,7 +51,8 @@ xmlport 90107 Resource
                 fieldattribute(IC_Partner_Purch__G_L_Acc__No_; Resource."IC Partner Purch. G/L Acc. No.") { Occurrence = Optional; }
                 fieldattribute(Image; Resource."Image") { Occurrence = Optional; }
                 fieldattribute(Privacy_Blocked; Resource."Privacy Blocked") { Occurrence = Optional; }
-                fieldattribute(Coupled_to_CRM; Resource."Coupled to CRM") { Occurrence = Optional; }
+                //fieldattribute(Coupled_to_CRM; Resource."Coupled to CRM") { Occurrence = Optional; } Field 'Coupled to CRM' is marked for removal. Reason: Replaced by flow field Coupled to Dataverse.
+                fieldattribute(Coupled_to_CRM; Resource."Coupled to Dataverse") { Occurrence = Optional; }
                 fieldattribute(Use_Time_Sheet; Resource."Use Time Sheet") { Occurrence = Optional; }
                 fieldattribute(Time_Sheet_Owner_User_ID; Resource."Time Sheet Owner User ID") { Occurrence = Optional; }
                 fieldattribute(Time_Sheet_Approver_User_ID; Resource."Time Sheet Approver User ID") { Occurrence = Optional; }
@@ -63,7 +64,8 @@ xmlport 90107 Resource
                     RecRef2: RecordRef;
                     ResourceRecRef: RecordRef;
                     PurchSetup: Record "Resources Setup";
-                    NoSeriesMgt: Codeunit NoSeriesManagement;
+                    //NoSeriesMgt: Codeunit NoSeriesManagement;
+                    NoSeriesMgt: Codeunit "No. Series";
                     ResourceTempl: Record Resource;
                     ResourceFldRef: FieldRef;
                     ResRecRef: RecordRef;

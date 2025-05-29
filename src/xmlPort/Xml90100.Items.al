@@ -83,7 +83,9 @@ xmlport 90100 Items
                 fieldattribute(Prevent_Negative_Inventory; Item."Prevent Negative Inventory") { Occurrence = Optional; }
                 fieldattribute(Cost_of_Open_Production_Orders; Item."Cost of Open Production Orders") { Occurrence = Optional; }
                 fieldattribute(Application_Wksh__User_ID; Item."Application Wksh. User ID") { Occurrence = Optional; }
-                fieldattribute(Coupled_to_CRM; Item."Coupled to CRM") { Occurrence = Optional; }
+                // fieldattribute(Coupled_to_CRM; Item."Coupled to CRM") { Occurrence = Optional; } //Field 'Coupled to CRM' is marked for removal. Reason: Replaced by flow field Coupled to Dataverse. Tag: 23.0.
+                //cambio de campos
+                fieldattribute(Coupled_to_CRM; Item."Coupled to Dataverse") { Occurrence = Optional; }
                 fieldattribute(Assembly_Policy; Item."Assembly Policy") { Occurrence = Optional; }
                 fieldattribute(GTIN; Item."GTIN") { Occurrence = Optional; }
                 fieldattribute(Default_Deferral_Template_Code; Item."Default Deferral Template Code") { Occurrence = Optional; }
@@ -162,7 +164,8 @@ xmlport 90100 Items
                     ItemRecRef: RecordRef;
                     ItemSetup: Record 313;
                     ItemTemplMgt: Codeunit "Item Templ. Mgt.";
-                    NoSeriesMgt: Codeunit NoSeriesManagement;
+                    // NoSeriesMgt: Codeunit NoSeriesManagement;
+                    NoSeriesMgt: Codeunit "No. Series";
                     ItemTempl: Record "Item Templ.";
                     ItemFldRef: FieldRef;
                     ProdRecRef: RecordRef;

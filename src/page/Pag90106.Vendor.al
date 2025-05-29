@@ -67,7 +67,8 @@ Page 90106 Vendor
                 field(Disable_Search_by_Name; Rec."Disable Search by Name") { ApplicationArea = All; }
                 field(Creditor_No_; Rec."Creditor No.") { ApplicationArea = All; }
                 field(Preferred_Bank_Account_Code; Rec."Preferred Bank Account Code") { ApplicationArea = All; }
-                field(Coupled_to_CRM; Rec."Coupled to CRM") { ApplicationArea = All; }
+                //field(Coupled_to_CRM; Rec."Coupled to CRM") { ApplicationArea = All; } //Field 'Coupled to CRM' is marked for removal. Reason: Replaced by flow field Coupled to Dataverse.
+                field(Coupled_to_CRM; Rec."Coupled to Dataverse") { ApplicationArea = All; }
                 field(Cash_Flow_Payment_Terms_Code; Rec."Cash Flow Payment Terms Code") { ApplicationArea = All; }
                 field(Primary_Contact_No_; Rec."Primary Contact No.") { ApplicationArea = All; }
                 field(Mobile_Phone_No_; Rec."Mobile Phone No.") { ApplicationArea = All; }

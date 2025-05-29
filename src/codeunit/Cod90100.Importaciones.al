@@ -343,7 +343,8 @@ codeunit 90100 Importaciones
         RecRef2: RecordRef;
         ResourceRecRef: RecordRef;
         PurchSetup: Record "Resources Setup";
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        //NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
         ResourceTempl: Record Resource;
         ResourceFldRef: FieldRef;
         ResRecRef: RecordRef;
@@ -489,7 +490,8 @@ codeunit 90100 Importaciones
         CustomerRecRef: RecordRef;
         SalesSetup: Record "Sales & Receivables Setup";
         CustomerTemplMgt: Codeunit "Customer Templ. Mgt.";
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        //  NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
         CustomerTempl: Record "Customer Templ.";
         CustomerFldRef: FieldRef;
         CustRecRef: RecordRef;
@@ -701,7 +703,8 @@ codeunit 90100 Importaciones
         VendorRecRef: RecordRef;
         PurchSetup: Record 312;
         VendorTemplMgt: Codeunit "Vendor Templ. Mgt.";
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        //NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
         VendorTempl: Record "Vendor Templ.";
         VendorFldRef: FieldRef;
         VendRecRef: RecordRef;
@@ -871,7 +874,8 @@ codeunit 90100 Importaciones
         VendorRecRef: RecordRef;
         PurchSetup: Record 312;
         VendorTemplMgt: Codeunit "Vendor Templ. Mgt.";
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        //NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
         VendorTempl: Record "Vendor Templ.";
         VendorFldRef: FieldRef;
         VendRecRef: RecordRef;
@@ -1291,7 +1295,8 @@ codeunit 90100 Importaciones
         VendorRecRef: RecordRef;
         PurchSetup: Record 312;
         VendorTemplMgt: Codeunit "Vendor Templ. Mgt.";
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        // NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
         VendorTempl: Record "Vendor Templ.";
         VendorFldRef: FieldRef;
         VendRecRef: RecordRef;
@@ -1551,7 +1556,8 @@ codeunit 90100 Importaciones
         VendorRecRef: RecordRef;
         PurchSetup: Record 312;
         VendorTemplMgt: Codeunit "Vendor Templ. Mgt.";
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        // NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
         VendorTempl: Record "Vendor Templ.";
         VendorFldRef: FieldRef;
         VendRecRef: RecordRef;
@@ -1768,7 +1774,8 @@ codeunit 90100 Importaciones
         VendorRecRef: RecordRef;
         PurchSetup: Record 312;
         VendorTemplMgt: Codeunit "Vendor Templ. Mgt.";
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        // NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
         VendorTempl: Record "Vendor Templ.";
         VendorFldRef: FieldRef;
         VendRecRef: RecordRef;
