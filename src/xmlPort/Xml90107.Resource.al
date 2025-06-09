@@ -63,7 +63,7 @@ xmlport 90107 Resource
                     RecRef2: RecordRef;
                     ResourceRecRef: RecordRef;
                     PurchSetup: Record "Resources Setup";
-                    NoSeriesMgt: Codeunit NoSeriesManagement;
+                    NoSeriesMgt: Codeunit "No. Series";
                     ResourceTempl: Record Resource;
                     ResourceFldRef: FieldRef;
                     ResRecRef: RecordRef;

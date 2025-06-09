@@ -162,7 +162,7 @@ xmlport 90100 Items
                     ItemRecRef: RecordRef;
                     ItemSetup: Record 313;
                     ItemTemplMgt: Codeunit "Item Templ. Mgt.";
-                    NoSeriesMgt: Codeunit NoSeriesManagement;
+                    NoSeriesMgt: Codeunit "No. Series";
                     ItemTempl: Record "Item Templ.";
                     ItemFldRef: FieldRef;
                     ProdRecRef: RecordRef;

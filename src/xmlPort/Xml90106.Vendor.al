@@ -99,7 +99,7 @@ xmlport 90106 Vendor
                     VendorRecRef: RecordRef;
                     PurchSetup: Record 312;
                     VendorTemplMgt: Codeunit "Vendor Templ. Mgt.";
-                    NoSeriesMgt: Codeunit NoSeriesManagement;
+                    NoSeriesMgt: Codeunit "No. Series";
                     VendorTempl: Record "Vendor Templ.";
                     VendorFldRef: FieldRef;
                     VendRecRef: RecordRef;

@@ -126,7 +126,7 @@ xmlport 90105 Customer
                     CustomerRecRef: RecordRef;
                     SalesSetup: Record "Sales & Receivables Setup";
                     CustomerTemplMgt: Codeunit "Customer Templ. Mgt.";
-                    NoSeriesMgt: Codeunit NoSeriesManagement;
+                    NoSeriesMgt: Codeunit "No. Series";
                     CustomerTempl: Record "Customer Templ.";
                     CustomerFldRef: FieldRef;
                     CustRecRef: RecordRef;
