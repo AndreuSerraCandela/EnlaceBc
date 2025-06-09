@@ -343,7 +343,7 @@ codeunit 90100 Importaciones
         RecRef2: RecordRef;
         ResourceRecRef: RecordRef;
         PurchSetup: Record "Resources Setup";
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
         ResourceTempl: Record Resource;
         ResourceFldRef: FieldRef;
         ResRecRef: RecordRef;
@@ -489,7 +489,7 @@ codeunit 90100 Importaciones
         CustomerRecRef: RecordRef;
         SalesSetup: Record "Sales & Receivables Setup";
         CustomerTemplMgt: Codeunit "Customer Templ. Mgt.";
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
         CustomerTempl: Record "Customer Templ.";
         CustomerFldRef: FieldRef;
         CustRecRef: RecordRef;
@@ -701,7 +701,7 @@ codeunit 90100 Importaciones
         VendorRecRef: RecordRef;
         PurchSetup: Record 312;
         VendorTemplMgt: Codeunit "Vendor Templ. Mgt.";
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
         VendorTempl: Record "Vendor Templ.";
         VendorFldRef: FieldRef;
         VendRecRef: RecordRef;
@@ -871,7 +871,7 @@ codeunit 90100 Importaciones
         VendorRecRef: RecordRef;
         PurchSetup: Record 312;
         VendorTemplMgt: Codeunit "Vendor Templ. Mgt.";
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
         VendorTempl: Record "Vendor Templ.";
         VendorFldRef: FieldRef;
         VendRecRef: RecordRef;
@@ -1008,7 +1008,7 @@ codeunit 90100 Importaciones
             SalesHeaderT."Transaction Specification" := GetValueAsText(JToken, 'Transaction_Specification');
             SalesHeaderT."Payment Method Code" := GetValueAsText(JToken, 'Payment_Method_Code');
             SalesHeaderT."Shipping Agent Code" := GetValueAsText(JToken, 'Shipping_Agent_Code');
-            SalesHeaderT."Package Tracking No." := GetValueAsText(JToken, 'Package_Tracking_No_');
+            //SalesHeaderT."Package Tracking No." := GetValueAsText(JToken, 'Package_Tracking_No_');
             SalesHeaderT."No. Series" := GetValueAsText(JToken, 'No__Series');
             SalesHeaderT."Posting No. Series" := GetValueAsText(JToken, 'Posting_No__Series');
             SalesHeaderT."Shipping No. Series" := GetValueAsText(JToken, 'Shipping_No__Series');
@@ -1291,7 +1291,7 @@ codeunit 90100 Importaciones
         VendorRecRef: RecordRef;
         PurchSetup: Record 312;
         VendorTemplMgt: Codeunit "Vendor Templ. Mgt.";
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
         VendorTempl: Record "Vendor Templ.";
         VendorFldRef: FieldRef;
         VendRecRef: RecordRef;
@@ -1304,6 +1304,8 @@ codeunit 90100 Importaciones
         i: Integer;
         FacturasL: Record "Sales Line";
         Linea: Integer;
+        ConfIva: Record "VAT Posting Setup";
+        Base: Decimal;
     begin
         JLPedidoToken.ReadFrom(Data);
         JLPedidoObj := JLPedidoToken.AsObject();
@@ -1527,6 +1529,21 @@ codeunit 90100 Importaciones
                 if SalesLineT."Valor Compra" <> 0 then
                     FacturasL.Validate("Valor Compra", SalesLineT."Valor Compra");
                 FacturasL.Modify();
+                If SalesLineT."VAT Prod. Posting Group" <> ' ' then begin
+                    ConfIva.Get(SalesLineT."VAT Prod. Posting Group", SalesLineT."VAT Bus. Posting Group");
+                    if ConfIva."No Taxable Type" = ConfIva."No Taxable Type"::"Non Taxable Due To Localization Rules" then begin
+                        FacturasL."VAT %" := 0;
+                        FacturasL.Validate("Unit Price", Round(SalesLineT."Unit Price" / (1 + SalesLineT."VAT %" / 100), 0.01));
+                        base := SalesLineT."Unit Price" * SalesLineT.Quantity;
+                        FacturasL.Modify();
+                        FacturasL := SalesLineT;
+                        FacturasL."Line No." := FacturasL."Line No." + 1;
+                        FacturasL.Validate("VAT Prod. Posting Group", 'NO SUJETO');
+                        FacturasL."VAT %" := 0;
+                        FacturasL.Validate("Unit Price", SalesLineT."Unit Price" - base);
+                        FacturasL.Insert();
+                    end;
+                end;
             end
         end;
         exit('Ok');
@@ -1551,7 +1568,7 @@ codeunit 90100 Importaciones
         VendorRecRef: RecordRef;
         PurchSetup: Record 312;
         VendorTemplMgt: Codeunit "Vendor Templ. Mgt.";
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
         VendorTempl: Record "Vendor Templ.";
         VendorFldRef: FieldRef;
         VendRecRef: RecordRef;
@@ -1768,7 +1785,7 @@ codeunit 90100 Importaciones
         VendorRecRef: RecordRef;
         PurchSetup: Record 312;
         VendorTemplMgt: Codeunit "Vendor Templ. Mgt.";
-        NoSeriesMgt: Codeunit NoSeriesManagement;
+        NoSeriesMgt: Codeunit "No. Series";
         VendorTempl: Record "Vendor Templ.";
         VendorFldRef: FieldRef;
         VendRecRef: RecordRef;
