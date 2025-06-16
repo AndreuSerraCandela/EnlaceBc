@@ -588,7 +588,9 @@ codeunit 90100 Importaciones
             CustT."EORI Number" := GetValueAsText(JToken, 'EORI_Number');
             CustT."Use GLN in Electronic Document" := GetValueAsBoolean(JToken, 'Use_GLN_in_Electronic_Document');
             CustT."E-Mail" := GetValueAsText(JToken, 'E_Mail');
+#pragma warning disable AL0432
             CustT."Home Page" := GetValueAsText(JToken, 'Home_Page');
+#pragma warning restore AL0432
             CustT."Reminder Terms Code" := GetValueAsText(JToken, 'Reminder_Terms_Code');
             //CustT."No. Series":=GetValueAsText(JToken, 'No__Series');
             //CustT."Tax Area Code":=GetValueAsText(JToken, 'Tax_Area_Code');
@@ -774,7 +776,9 @@ codeunit 90100 Importaciones
             VendorT."County" := GetValueAsText(JToken, 'County');
             VendorT."EORI Number" := GetValueAsText(JToken, 'EORI_Number');
             VendorT."E-Mail" := GetValueAsText(JToken, 'E_Mail');
+#pragma warning disable AL0432
             VendorT."Home Page" := GetValueAsText(JToken, 'Home_Page');
+#pragma warning restore AL0432
             //VendorT."No. Series":=GetValueAsText(JToken, 'No__Series');
             //VendorT."Tax Area Code":=GetValueAsText(JToken, 'Tax_Area_Code');
             //VendorT."Tax Liable":=GetValueAsText(JToken, 'Tax_Liable');
@@ -1530,7 +1534,7 @@ codeunit 90100 Importaciones
                     FacturasL.Validate("Valor Compra", SalesLineT."Valor Compra");
                 FacturasL.Modify();
                 If SalesLineT."VAT Prod. Posting Group" <> ' ' then begin
-                    ConfIva.Get(SalesLineT."VAT Prod. Posting Group", SalesLineT."VAT Bus. Posting Group");
+                    ConfIva.Get(SalesLineT."VAT Bus. Posting Group", SalesLineT."VAT Prod. Posting Group");
                     if ConfIva."No Taxable Type" = ConfIva."No Taxable Type"::"Non Taxable Due To Localization Rules" then begin
                         FacturasL."VAT %" := 0;
                         FacturasL.Validate("Unit Price", Round(SalesLineT."Unit Price" / (1 + SalesLineT."VAT %" / 100), 0.01));
